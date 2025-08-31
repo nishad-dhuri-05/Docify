@@ -1,3 +1,6 @@
+#!/bin/bash
+set -e  # exit on error
+
 cd ..
 cd repo
 GITHUB_USERNAME=$1
@@ -5,37 +8,38 @@ GITHUB_REPOSITORY=$2
 GITHUB_TOKEN=$3
 GITHUB_APP_ID=$4
 GITHUB_BRANCH_NAME="docify"
+
 cd $GITHUB_REPOSITORY
 ls
-if [ $# -eq 0 ]; then
-    echo "Usage: $0 <github_username> <repository_name> <access_token>"
+
+if [ $# -lt 3 ]; then
+    echo "Usage: $0 <github_username> <repository_name> <access_token> [app_id]"
     exit 1
 fi
 
-# Function to check if a Git branch exists
-branch_exists() {
-    git show-ref --verify --quiet "refs/heads/"$GITHUB_BRANCH_NAME""
-}
+# Ensure local repo is clean & updated
+git fetch origin
 
-if branch_exists "$GITHUB_BRANCH_NAME"; then
-    echo "Branch '$GITHUB_BRANCH_NAME' already exists. Checking out..."
-    git checkout "$GITHUB_BRANCH_NAME"
-else
-    echo "Creating branch '$GITHUB_BRANCH_NAME' and checking out..."
-    git checkout -b "$GITHUB_BRANCH_NAME"
-fi
+# Make sure we are on the branch with changes (main assumed here)
+git checkout main || git checkout -b main
 
-# Change to docify branch
-git checkout docify
-
-# Add all files
+# Stage all changes (like requirements.txt)
 git add .
 
+# Configure bot identity
 git config --global user.name "docify[bot]"
-git config --global user.email $GITHUB_APP_ID+docify[bot]@users.noreply.github.com
+git config --global user.email "$GITHUB_APP_ID+docify[bot]@users.noreply.github.com"
 
-# Commit with message
-git commit -m "Docify changes to repository, changes made in ./assets folder"
+# Commit changes (ignore error if nothing new)
+git commit -m "Docify changes to repository, including requirements.txt" || echo "No changes to commit"
 
-# Push to github
-git push -f https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_USERNAME}/${GITHUB_REPOSITORY}.git docify
+# Delete local docify branch if it exists
+if git show-ref --verify --quiet "refs/heads/$GITHUB_BRANCH_NAME"; then
+    git branch -D $GITHUB_BRANCH_NAME
+fi
+
+# Create fresh docify branch from current state
+git checkout -b $GITHUB_BRANCH_NAME
+
+# Push to remote (force overwrite to carry everything)
+git push -f https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_USERNAME}/${GITHUB_REPOSITORY}.git $GITHUB_BRANCH_NAME

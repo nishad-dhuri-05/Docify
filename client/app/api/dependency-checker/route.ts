@@ -51,7 +51,7 @@ export async function POST(request: NextRequest) {
         : [
             'sh',
             '-c',
-            `tr -d "\\r" < download.sh > d.sh && tr -d "\\r" < commit.sh > c.sh && tr -d "\\r" < dependency-checker.sh > dep.sh && chmod +x d.sh c.sh dep.sh && ./d.sh ${github_access_token} ${github_username} ${repositoryName} ${branch_name} && ./dep.sh ${repositoryName} && ./c.sh ${github_username} ${repositoryName} ${github_access_token} ${process.env.GITHUB_APP_ID} && tail -f /dev/null`,
+            `tr -d "\\r" < download.sh > d.sh && tr -d "\\r" < commit.sh > c.sh && tr -d "\\r" < dependency-checker.sh > dep.sh && chmod +x d.sh c.sh dep.sh && ./d.sh ${github_access_token} ${github_username} ${repositoryName} ${branch_name} && ./dep.sh ${repositoryName} && ./c.sh ${github_username} ${repositoryName} ${github_access_token} ${process.env.GITHUB_APP_ID} `,
           ];
 
     const containerOptions = {
