@@ -22,7 +22,7 @@ const Page = async () => {
     });
   });
 
-  const AvatarComponent = <Avatar />;
+  const AvatarComponent = <Avatar />; 
 
   return (
     <div key='1' className='flex h-screen flex-col'>

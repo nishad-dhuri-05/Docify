@@ -1,9 +1,13 @@
 node_modules
-
+prisma
 
 package-lock.json
 /package-lock.json
 package-lock*.json
+
+myenv
+
+.json
 
 .env
 .env*.local

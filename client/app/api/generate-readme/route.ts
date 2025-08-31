@@ -5,7 +5,7 @@ import { z } from 'zod';
 
 import getCurrentUser from '@/lib/curr';
 import { GenerateReadmeSchema } from '@/lib/validations/generate-readme';
-
+import dep_checker from '@/app/api/dependency-checker/route';
 // POST method route handler to generate a project README
 // JSON payload {
 //  project_description: 'string', (project description)
@@ -15,11 +15,21 @@ import { GenerateReadmeSchema } from '@/lib/validations/generate-readme';
 export async function POST(request: NextRequest) {
   const data = await request.json();
   const currentUser = await getCurrentUser();
+  //first make a api call to another one of our own api routes
+  // const response = await axios.post(
+  //   `${process.env.NEXT_APP_URL}/api/dependency-checker`,
+  //   data
+  // );
 
   if (!currentUser) {
     return NextResponse.json({ message: 'Unauthorized' }, { status: 401 });
   }
 
+  // const dep_res = await dep_checker(request);
+  // if(dep_res.status !== 200){
+  //   return NextResponse.json({ message: 'Dependency checker failed' }, { status: 500 });
+  // }
+  
   const { github_access_token, github_username } = currentUser;
 
   // To check whether we need to call /api/dependency-checker

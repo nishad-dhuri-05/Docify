@@ -6,6 +6,8 @@ import { z } from 'zod';
 
 import getCurrentUser from '@/lib/curr';
 import { DependencyCheckerSchema } from '@/lib/validations/dependency-checker';
+//import the post function from dependency-checker 
+
 
 const parentDir = path.resolve(__dirname, '..', '..', '..', '..', '..', '..');
 
@@ -16,6 +18,7 @@ const parentDir = path.resolve(__dirname, '..', '..', '..', '..', '..', '..');
 // }
 export async function POST(request: NextRequest) {
   const data = await request.json();
+  const headers = request.headers;
   const dockerode = new Dockerode();
 
   const currentUser = await getCurrentUser();
@@ -48,7 +51,7 @@ export async function POST(request: NextRequest) {
         : [
             'sh',
             '-c',
-            `tr -d "\\r" < download.sh > d.sh && tr -d "\\r" < commit.sh > c.sh && tr -d "\\r" < dependency-checker.sh > dep.sh && chmod +x d.sh c.sh dep.sh && ./d.sh ${github_access_token} ${github_username} ${repositoryName} ${branch_name} && ./dep.sh ${repositoryName} && ./c.sh ${github_username} ${repositoryName} ${github_access_token} ${process.env.GITHUB_APP_ID} `,
+            `tr -d "\\r" < download.sh > d.sh && tr -d "\\r" < commit.sh > c.sh && tr -d "\\r" < dependency-checker.sh > dep.sh && chmod +x d.sh c.sh dep.sh && ./d.sh ${github_access_token} ${github_username} ${repositoryName} ${branch_name} && ./dep.sh ${repositoryName} && ./c.sh ${github_username} ${repositoryName} ${github_access_token} ${process.env.GITHUB_APP_ID} && tail -f /dev/null`,
           ];
 
     const containerOptions = {

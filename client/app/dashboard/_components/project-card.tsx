@@ -125,6 +125,29 @@ const ProjectCard: FC<ProjectCardProps> = ({
       error: 'Error',
     });
   }
+
+  async function handleReadmeClick(){
+    console.log('Generate README Clicked');
+
+    setIsLoading(true);
+
+    const promise = () =>
+      axios
+        .post('/api/dependency-checker', {
+          repositoryName: repository_name,
+          project_type: project_type,
+          projectId: project_id,
+        })
+        .then(() => router.push(`/generate_readme/${project_id}`))
+        .finally(() => setIsLoading(false));
+
+    toast.promise(promise, {
+      loading: 'Gathering Prerequisites...',
+      success: 'Prerequisites gathered successfully',
+      error: 'Failed to fetch dependencies',
+    });
+  }
+
   async function handleLatestUmlClick() {
     //just redirect to the uml viewing page
     router.push(`/uml/${project_id}?latest=true`);
@@ -231,7 +254,8 @@ const ProjectCard: FC<ProjectCardProps> = ({
           <DropdownMenuContent align='end'>
             <DropdownMenuItem
               disabled={isLoading}
-              onClick={() => router.push(`/generate_readme/${project_id}`)}
+              // onClick={() => router.push(`/generate_readme/${project_id}`)}
+              onClick ={handleReadmeClick}
             >
               Generate Readme
             </DropdownMenuItem>

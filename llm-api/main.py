@@ -2,8 +2,8 @@ import os
 from dotenv import load_dotenv
 from fastapi import FastAPI, HTTPException, status
 from fastapi.middleware.cors import CORSMiddleware
-from hugchat import hugchat
-from hugchat.login import Login
+# from hugchat import hugchat
+# from hugchat.login import Login
 import pprint
 import google.generativeai as genai
 from load_creds import load_creds
